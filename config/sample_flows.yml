@@ -7,3 +7,11 @@
   host: github.com
   port: 22
   proto: tcp
+
+- name: demo-web
+  host: example.com
+  port: 80
+  proto: tcp
+  l7_check:
+    type: http
+    path: /          # GET http://example.com/

@@ -5,6 +5,7 @@ import pytest
 from unittest import mock
 
 from probe.l4_probe import classify_errno, probe_host
+from analyzer.classifier import merge
 
 
 def test_classify_errno():
@@ -30,4 +31,4 @@ async def test_probe_host_tcp_open(monkeypatch):
                         fake_getaddrinfo, raising=False)
 
     status = await probe_host("localhost", 80)
-    assert status == "OPEN"
+    assert merge(status) == "OK"

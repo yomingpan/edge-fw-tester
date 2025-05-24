@@ -2,6 +2,7 @@ import asyncio
 import errno
 import socket
 from typing import Tuple
+from .packet_sniffer import capture_result
 
 __all__ = ["classify_errno", "probe_host"]
 
@@ -47,7 +48,10 @@ async def probe_host(host: str, port: int, proto: str = "tcp",
     loop = asyncio.get_running_loop()
     res = await loop.getaddrinfo(host, port, type=socket.SOCK_STREAM)
     addr = res[0][4]  # (ip, port)
-    if proto == "tcp":
-        return await _probe_tcp(addr, timeout=timeout)
-    else:
-        return await _probe_udp(addr, timeout=timeout)
+    with capture_result(addr[0], port, proto) as q:
+        if proto == "tcp":
+            l4 = await _probe_tcp(addr, timeout=timeout)
+        else:
+            l4 = await _probe_udp(addr, timeout=timeout)
+    sniff_res = q.get_nowait()  # RST / ICMP_UNREACH / NONE
+    return l4, sniff_res

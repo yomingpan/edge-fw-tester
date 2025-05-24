@@ -5,3 +5,5 @@ click>=8
 pytest>=8           # 單元測試
 pytest-asyncio>=0.23
 pyyaml
+click>=8
+pytest-asyncio>=0.23
