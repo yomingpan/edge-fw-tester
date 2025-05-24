@@ -1,0 +1,7 @@
+pydantic>=2
+aiohttp>=3
+scapy>=2.5.0        # 若無 root 權限可暫時註解
+click>=8
+pytest>=8           # 單元測試
+pytest-asyncio>=0.23
+pyyaml
