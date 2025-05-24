@@ -1,0 +1,23 @@
+# 1️⃣ OPEN → 有服務在跑，能成功連上
+- name: nmap-open
+  host: scanme.nmap.org
+  port: 22
+  proto: tcp
+
+# 2️⃣ REFUSED → 主機有回應，但 port 沒有服務在聽，會收到 RST
+- name: ex-refused
+  host: example.com
+  port: 81
+  proto: tcp
+
+# 3️⃣ FILTERED → 封包被丟棄，不會回應（例如被防火牆阻擋）
+- name: bogon-filtered
+  host: 10.255.255.1
+  port: 80
+  proto: tcp
+
+# 4️⃣ ERR_xxx → 無法解析或根本無路由（例如網路無效或 DNS 不存在）
+- name: unroutable
+  host: 203.0.113.1
+  port: 80
+  proto: tcp

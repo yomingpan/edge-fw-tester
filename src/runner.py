@@ -30,11 +30,27 @@ def main(flows: str, full: bool, output: str = None):  # 這裡改成預設 None
                     status = "L7_OK" if ok else "L7_FAIL"
             return status
 
-        summary = {f.name: await run_one(f) for f in flows_cfg}
+        summary = {}
+        details = {}
+        for f in flows_cfg:
+            status = await run_one(f)
+            summary[f.name] = status
+            # 收集詳細資訊
+            details[f.name] = {
+                "result": status,
+                "hostname": f.host,
+                "proto": f.proto.upper(),
+                "port": f.port,
+                # 這裡假設 l4_probe.classify_errno 有 print 出 err，可考慮回傳 err
+                # 若要更詳細，需修改 probe_host 回傳更多細節
+            }
         for n, s in summary.items():
-            click.echo(f"{n:20} {s}")
+            detail = details[n]
+            # 第一欄只顯示 OK 或 ERR
+            short_result = 'OK' if detail['result'] == 'OK' else 'ERR'
+            click.echo(f"{short_result:<6} {n:<16} {detail['hostname']:<22} {detail['proto']:<6} {detail['port']:<5} {detail['result']}")
         if output:
-            Path(output).write_text(json.dumps(summary, indent=2))
+            Path(output).write_text(json.dumps(details, indent=2))
 
     asyncio.run(_run())
 
