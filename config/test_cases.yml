@@ -21,3 +21,15 @@
   host: 203.0.113.1
   port: 80
   proto: tcp
+
+# 5️⃣ DNS_FAIL → DNS 解析失敗
+- name: bad-dns
+  host: notarealdomain1234567.com
+  port: 80
+  proto: tcp
+
+# 6️⃣ HOST_UNREACHABLE → ICMP 不通
+- name: unreachable-host
+  host: 198.18.0.1
+  port: 80
+  proto: tcp

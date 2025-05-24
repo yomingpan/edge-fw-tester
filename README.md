@@ -76,3 +76,23 @@ ERR    fail-demo        192.0.2.123          TCP    9999  ERR_HOST_UNREACHABLE
 ---
 
 如需自訂測試案例，請參考 `config/sample_flows.yml` 格式編輯。
+
+## 單元測試（unittest/pytest）
+
+本專案已內建 pytest 測試。
+
+1. 啟動虛擬環境（如上）
+2. 安裝 pytest：
+   ```bash
+   pip install pytest
+   ```
+3. 執行所有單元測試（一般情境）：
+   ```bash
+   pytest
+   ```
+   若測試內容涉及 sniffer 或需 root 權限，請用：
+   ```bash
+   sudo -E $(which pytest)
+   ```
+
+測試檔案位於 `tests/` 目錄下，包含 L4 探測與分類器等自動化測試。
