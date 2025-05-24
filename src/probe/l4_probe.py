@@ -1,5 +1,6 @@
 import asyncio
 import errno
+import random
 import socket
 from typing import Tuple
 from .packet_sniffer import capture_result
@@ -30,11 +31,24 @@ async def _probe_tcp(addr: Tuple[str, int], timeout: float = 2.0) -> str:
 
 
 async def _probe_udp(addr: Tuple[str, int], timeout: float = 2.0) -> str:
-    # 發送空 datagram，等待 ICMP 回覆（簡化版）
+    # 發送合法 DNS 查詢，等待 ICMP 回覆（更精確）
+    def build_dns_query(domain="example.com"):
+        tid = random.randint(0, 65535)
+        header = tid.to_bytes(2, "big") + b"\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00"
+        qname = b"".join([bytes([len(x)]) + x.encode() for x in domain.split(".")]) + b"\x00"
+        qtype = b"\x00\x01"  # A
+        qclass = b"\x00\x01" # IN
+        return header + qname + qtype + qclass
+
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.settimeout(timeout)
         try:
-            s.sendto(b"", addr)
+            # 若 port 為 53，發送合法 DNS 查詢
+            if addr[1] == 53:
+                query = build_dns_query()
+                s.sendto(query, addr)
+            else:
+                s.sendto(b"", addr)
             s.recvfrom(1024)          # 若能收到表示有人回
             return "OPEN|UNKNOWN"
         except socket.timeout:
