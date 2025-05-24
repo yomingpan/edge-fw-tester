@@ -22,11 +22,13 @@ def classify_errno(err: int) -> str:
 
 async def _probe_tcp(addr: Tuple[str, int], timeout: float = 2.0) -> str:
     loop = asyncio.get_running_loop()
-    err = await loop.run_in_executor(
-        None,
-        lambda: socket.create_connection(addr, timeout=timeout)
-               or 0,  # 成功時 err=0
-    )
+    def try_connect():
+        try:
+            socket.create_connection(addr, timeout=timeout)
+            return 0
+        except OSError as e:
+            return e.errno
+    err = await loop.run_in_executor(None, try_connect)
     return classify_errno(err)
 
 
