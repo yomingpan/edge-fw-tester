@@ -3,8 +3,12 @@ from typing import Tuple
 L4_OK = {"OPEN", "OPEN|UNKNOWN"}
 
 
-def merge(result: Tuple[str, str]) -> str:
-    l4_status, sniff = result
+def merge(result: tuple) -> str:
+    # 允許 result 為 (l4, sniff) 或 (l4, sniff, extra)
+    if len(result) == 3:
+        l4_status, sniff, _ = result
+    else:
+        l4_status, sniff = result
     """
     合併 L4 與 scapy sniff 資訊。
     sniff 可能值：RST, ICMP_UNREACH, NONE
