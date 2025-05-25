@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  become: false
+  vars:
+    flows_file: config/sample_flows.yml
+  roles:
+    - role: edge_fw_tester

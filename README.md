@@ -134,3 +134,71 @@ Summary: total=8  OK=5  ERR=3
       port: 22, 80, 443
       proto: tcp
     ```
+
+## Ansible 本地測試與部署
+
+本專案已支援標準 Ansible 佈署結構，可用於本地或遠端 edge 主機自動化測試。
+
+### 1. 安裝 Ansible 及相關依賴
+
+```bash
+pip install -r ansible-requirements.txt
+```
+
+### 推薦：建立獨立 Ansible 虛擬環境
+
+建議使用下列指令建立並啟用 ansible_venv 虛擬環境，並安裝 Ansible 相關依賴：
+
+```bash
+python3 -m venv ansible_venv && source ansible_venv/bin/activate && pip install -r ansible-requirements.txt
+```
+
+> 執行完畢後，所有 Ansible 相關指令請在啟用 ansible_venv 的情況下操作。
+
+### 2. 目錄結構
+
+```
+edge-fw-tester/
+├── ansible_edge_fw_test.yml         # Ansible playbook (本地/遠端皆可用)
+├── ansible-requirements.txt         # Ansible 端依賴
+├── roles/
+│   └── edge_fw_tester/
+│       ├── files/                   # src, config, tests 皆在此
+│       ├── tasks/main.yml           # 主要部署與測試任務
+│       └── templates/               # (預留)
+...
+```
+
+### 3. 本地測試（localhost）
+
+```bash
+ansible-playbook -i localhost, -c local ansible_edge_fw_test.yml
+```
+
+### 4. 遠端 edge 主機測試
+
+- 編輯 inventory 檔，指定 edge 主機
+- 執行：
+  ```bash
+  ansible-playbook -i <your_inventory> ansible_edge_fw_test.yml -u <edge_user>
+  ```
+
+### 5. Playbook 功能
+- 自動複製 src、config、tests 到目標主機
+- 建立虛擬環境並安裝依賴
+- 上傳 flows 檔案
+- 遠端執行 runner.py，產生 JSON 結果
+- 拉回結果到本機
+- 顯示測試摘要
+
+> 可依需求修改 roles/edge_fw_tester/tasks/main.yml 以擴充更多自動化步驟。
+
+### Ansible 本地端一鍵測試指令
+
+若已完成環境建置，可直接用下列指令進行本地端防火牆自動化測試：
+
+```bash
+source ansible_venv/bin/activate && ansible-playbook -i inventory ansible_edge_fw_test.yml
+```
+
+執行完畢後，測試結果會輸出於 `edge_fw_result.json`，可用 `cat` 或 `jq` 檢視。

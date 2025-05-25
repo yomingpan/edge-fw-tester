@@ -1,2 +1,5 @@
 fw_tester/
 __pycache__/
+ansible_venv/
+.pytest_cache/
+edge_fw_result.json

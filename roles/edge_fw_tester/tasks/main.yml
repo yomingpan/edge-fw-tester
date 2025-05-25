@@ -1,0 +1,42 @@
+---
+- name: 複製 edge-fw-tester 專案到目標主機
+  copy:
+    src: files/
+    dest: /home/{{ ansible_user }}/edge-fw-tester/
+    mode: preserve
+
+- name: 建立 Python 虛擬環境
+  shell: |
+    python3 -m venv /home/{{ ansible_user }}/fw_tester
+  args:
+    creates: /home/{{ ansible_user }}/fw_tester/bin/activate
+
+- name: 安裝 Python 依賴
+  pip:
+    requirements: /home/{{ ansible_user }}/edge-fw-tester/roles/edge_fw_tester/files/requirements.txt
+    virtualenv: /home/{{ ansible_user }}/fw_tester
+
+- name: 上傳 flows 檔案到目標主機
+  copy:
+    src: "{{ flows_file }}"
+    dest: "/tmp/sample_flows.yml"
+    mode: '0644'
+
+- name: 執行 runner.py 並產生 JSON 結果
+  shell: |
+    cd /home/yomingpan/edge-fw-tester
+    source /home/yomingpan/fw_tester/bin/activate
+    python3 -m src.runner /tmp/sample_flows.yml --output /tmp/edge_fw_result.json --fast
+  args:
+    executable: /bin/bash
+
+- name: 拉回結果 JSON
+  fetch:
+    src: /tmp/edge_fw_result.json
+    dest: ./edge_fw_result.json
+    flat: yes
+
+- name: 顯示測試結果摘要
+  shell: cat ./edge_fw_result.json
+  delegate_to: localhost
+  run_once: true

@@ -1,0 +1,4 @@
+# group_vars for edge group
+---
+# 這裡可設定 edge 群組共用變數
+common_var: group_default

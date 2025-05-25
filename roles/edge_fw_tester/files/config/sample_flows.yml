@@ -1,0 +1,63 @@
+- name: google-dns
+  host: 8.8.8.8
+  port: 53
+  proto: udp
+
+- name: github-ssh
+  host: github.com
+  port: 22, 80, 443
+  proto: tcp
+
+# 你也可以這樣寫：
+# - name: myserver
+#   host: my.example.com
+#   port: 22, 8080, 8443
+#   proto: tcp
+#   l7_check:
+#     type: http
+#     path: /
+# 會自動展開為 myserver-22, myserver-8080, myserver-8443 三個測試
+
+- name: demo-web
+  host: example.com
+  port: 80
+  proto: tcp
+  l7_check:
+    type: http
+    path: /          # GET http://example.com/
+
+- name: portquiz-http
+  host: portquiz.net
+  port: 80
+  proto: tcp
+  l7_check:
+    type: http
+    path: /
+
+- name: nmap-ssh
+  host: scanme.nmap.org
+  port: 22
+  proto: tcp
+
+- name: fail-demo
+  host: 192.0.2.123
+  port: 9999
+  proto: tcp
+
+- name: open-http
+  host: example.com
+  port: 80
+  proto: tcp
+  l7_check:
+    type: http
+    path: /
+
+- name: refused-demo
+  host: example.com
+  port: 81
+  proto: tcp
+
+- name: filtered-demo
+  host: 10.255.255.1
+  port: 80
+  proto: tcp

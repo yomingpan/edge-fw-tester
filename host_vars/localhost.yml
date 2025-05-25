@@ -1,0 +1,5 @@
+# host_vars for localhost (edge)
+---
+# 可自訂本機 edge 測試參數
+custom_var: example_value
+ansible_user: "yomingpan"
