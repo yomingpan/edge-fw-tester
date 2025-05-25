@@ -12,18 +12,11 @@ python3 -m venv fw_tester
 
 2. **啟動虛擬環境**
 
-- Linux/macOS:
-  ```bash
-  source fw_tester/bin/activate
-  ```
-- Windows (cmd):
-  ```cmd
-  fw_tester\Scripts\activate
-  ```
-- Windows (PowerShell):
-  ```powershell
-  fw_tester\Scripts\Activate.ps1
-  ```
+| 平台              | 啟動指令                                  |
+|-------------------|-------------------------------------------|
+| Linux/macOS       | `source fw_tester/bin/activate`           |
+| Windows (cmd)     | `fw_tester\Scripts\activate`             |
+| Windows (PowerShell) | `fw_tester\Scripts\Activate.ps1`      |
 
 3. **安裝依賴套件**
 
@@ -63,6 +56,23 @@ sudo -E $(which python) -m src.runner config/sample_flows.yml --time-out 8
 sudo -E $(which python) -m src.runner config/sample_flows.yml --full
 ```
 
+### 並行與依序測試
+
+- 預設為依序測試（逐一執行，輸出順序與 flows 檔案一致）：
+  ```bash
+  python src/runner.py config/sample_flows.yml
+  ```
+- 啟用並行測試（大幅加速多目標檢查，結果順序不保證）：
+  ```bash
+  python src/runner.py config/sample_flows.yml --fast
+  ```
+- 強制依序測試（顯式指定）：
+  ```bash
+  python src/runner.py config/sample_flows.yml --no-fast
+  ```
+
+> 並行模式下，所有目標同時檢查，適合大量主機/服務；依序模式下，便於觀察逐步進度與除錯。
+
 ## 輸出說明
 
 每一行格式如下：
@@ -73,6 +83,15 @@ ERR    fail-demo        192.0.2.123          TCP    9999  ERR_HOST_UNREACHABLE
 ```
 - 第一欄：簡短結果（OK/ERR）
 - 最後一欄：詳細狀態說明
+
+執行結束時，會額外輸出 summary 統計：
+
+```
+Summary: total=8  OK=5  ERR=3
+```
+- total：總測試數
+- OK：成功數量
+- ERR：失敗數量
 
 ## 測試案例
 
