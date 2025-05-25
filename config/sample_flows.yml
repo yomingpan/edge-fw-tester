@@ -5,8 +5,18 @@
 
 - name: github-ssh
   host: github.com
-  port: 22
+  port: 22, 80, 443
   proto: tcp
+
+# 你也可以這樣寫：
+# - name: myserver
+#   host: my.example.com
+#   port: 22, 8080, 8443
+#   proto: tcp
+#   l7_check:
+#     type: http
+#     path: /
+# 會自動展開為 myserver-22, myserver-8080, myserver-8443 三個測試
 
 - name: demo-web
   host: example.com

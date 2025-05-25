@@ -37,4 +37,20 @@ def load_flows(path) -> List[Flow]:
     data = yaml.safe_load(file_content)
     if data is None:
         data = []
-    return [Flow(**item) for item in data]
+    flows = []
+    for item in data:
+        ports = item["port"]
+        if isinstance(ports, int):
+            ports = [ports]
+        elif isinstance(ports, str):
+            ports = [int(p.strip()) for p in ports.split(",") if p.strip()]
+        else:
+            raise ValueError(f"Invalid port value: {ports}")
+        for p in ports:
+            flow_item = item.copy()
+            flow_item["port"] = p
+            # 若多 port，自動補上 port 編號於 name
+            if len(ports) > 1:
+                flow_item["name"] = f"{item['name']}-{p}"
+            flows.append(Flow(**flow_item))
+    return flows

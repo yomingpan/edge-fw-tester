@@ -121,3 +121,16 @@ Summary: total=8  OK=5  ERR=3
    ```
 
 測試檔案位於 `tests/` 目錄下，包含 L4 探測與分類器等自動化測試。
+
+## 進階功能
+
+- 支援同一個 host 多個 port 測試：
+  - flows 檔案可用 `port: 22, 80, 443` 逗號分隔多個 port
+  - 會自動展開為多個測試，name 會自動加上 port 編號（如 github-ssh-22）
+  - 範例：
+    ```yaml
+    - name: github-ssh
+      host: github.com
+      port: 22, 80, 443
+      proto: tcp
+    ```
