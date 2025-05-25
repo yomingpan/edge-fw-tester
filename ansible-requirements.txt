@@ -1,2 +1,5 @@
 ansible>=2.9
 paramiko
+click
+pydantic
+# ...如有其他依賴請補充...

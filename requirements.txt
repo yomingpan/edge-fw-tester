@@ -1,6 +1,0 @@
-# 複製自專案根目錄 requirements.txt
-ansible>=2.9
-paramiko
-click
-pydantic
-# ...如有其他依賴請補充...

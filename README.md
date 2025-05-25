@@ -145,9 +145,9 @@ Summary: total=8  OK=5  ERR=3
 pip install -r ansible-requirements.txt
 ```
 
-### 推薦：建立獨立 Ansible 虛擬環境
+### Ansible 環境安裝指令
 
-建議使用下列指令建立並啟用 ansible_venv 虛擬環境，並安裝 Ansible 相關依賴：
+請使用下列指令建立並啟用 ansible_venv 虛擬環境，並安裝所有依賴（已統一於 ansible-requirements.txt）：
 
 ```bash
 python3 -m venv ansible_venv && source ansible_venv/bin/activate && pip install -r ansible-requirements.txt
