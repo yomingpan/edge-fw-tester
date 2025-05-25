@@ -15,4 +15,6 @@ def merge(result: Tuple[str, str]) -> str:
         return "SERVICE_DOWN"
     if sniff == "ICMP_UNREACH":
         return "FILTERED"
+    if l4_status == "FILTERED_OR_NO_SERVICE":
+        return "NO_REPLY (可能被防火牆擋下或無服務)"
     return l4_status  # 其他保留原碼

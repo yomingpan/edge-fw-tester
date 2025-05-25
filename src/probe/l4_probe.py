@@ -79,11 +79,11 @@ async def probe_host(host: str, port: int, proto: str = "tcp",
     try:
         socket.gethostbyname(host)
     except socket.gaierror:
-        return ("ERR_DNS_FAIL", "NONE")
+        return ("ERR_DNS_FAIL", "NONE", {"timeout": timeout})
     # 再做 ICMP ping
     result = subprocess.run(["ping", "-c", "1", "-W", "1", host], stdout=subprocess.DEVNULL)
     if result.returncode != 0:
-        return ("ERR_HOST_UNREACHABLE", "NONE")
+        return ("ERR_HOST_UNREACHABLE", "NONE", {"timeout": timeout})
     loop = asyncio.get_running_loop()
     res = await loop.getaddrinfo(host, port, type=socket.SOCK_STREAM)
     addr = res[0][4]  # (ip, port)
@@ -93,4 +93,8 @@ async def probe_host(host: str, port: int, proto: str = "tcp",
         else:
             l4 = await _probe_udp(addr, timeout=timeout)
     sniff_res = q.get_nowait()  # RST / ICMP_UNREACH / NONE
-    return l4, sniff_res
+    # 若為 FILTERED_OR_NO_SERVICE，進行二次驗證（加長 timeout）
+    if l4 == "FILTERED_OR_NO_SERVICE" and timeout < 8.0:
+        l4_long, sniff_long, _ = await probe_host(host, port, proto, timeout=8.0)
+        return l4_long, sniff_long, {"timeout": 8.0, "double_check": True}
+    return l4, sniff_res, {"timeout": timeout}
