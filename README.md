@@ -49,7 +49,13 @@ sudo -E $(which python) -m src.runner config/sample_flows.yml
 sudo -E $(which python) -m src.runner config/test_cases.yml
 ```
 
-### 進階：啟用 L7/sniff 檢查
+### 進階：自訂 timeout 與啟用 L7/sniff 檢查
+
+可用 `--time-out` 參數自訂 L4 探測 timeout 秒數（預設 2.0 秒）：
+
+```bash
+sudo -E $(which python) -m src.runner config/sample_flows.yml --time-out 8
+```
 
 加上 `--full` 參數可啟用 L7 健康檢查與封包監聽：
 
